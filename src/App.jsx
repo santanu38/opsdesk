@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import ProtectedRoute from "./routes/ProtectedRoute"
+import TicketsPage from './pages/TicketsPage'
 
 function App() {
 
@@ -16,8 +17,10 @@ function App() {
          <Route element={<ProtectedRoute/>}>
          
             <Route path="/dashboard" element={<DashboardPage/>}/>
+              <Route path="/tickets" element={<TicketsPage />} />
          </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+         
       </Routes>
     </BrowserRouter>
   )
