@@ -2,9 +2,12 @@ import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 import {axiosClient} from "../api/axiosClient";
 export const fetchTickets=createAsyncThunk(
     "tickets/fetchTickets",
-    async(_,{rejectWithValue})=>{
+    async(params={},{rejectWithValue,signal})=>{
         try{
-          const response=await axiosClient.get("/tickets")
+          const response=await axiosClient.get("/tickets",{params,signal})
+           console.log(
+             `Response arrived for search "${params.search ?? ""}": ${response.data.length} tickets`
+           )
           return response.data
         }catch(error){
             return rejectWithValue(error.response?.data?.message || "Failed to load tickets")
@@ -42,6 +45,7 @@ const ticketSlice=createSlice({
         state.items=action.payload
        })
        .addCase(fetchTickets.rejected,(state,action)=>{
+         if (action.meta.aborted) return // cancelled on purpose, not an error
         state.status="failed"
         state.error=action.payload
        })

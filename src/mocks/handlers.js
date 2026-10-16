@@ -63,18 +63,42 @@ export const handlers = [
   }),
 
   // GET TICKETS (supports basic query params for status/priority filtering later)
+  // http.get("/api/tickets", async ({ request }) => {
+  //   await delay(400)
+
+  //   const authHeader = request.headers.get("Authorization")
+  //   if (!authHeader) {
+  //     return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
+  //   }
+
+  //   const url = new URL(request.url)
+  //   const status = url.searchParams.get("status")
+  //   const priority = url.searchParams.get("priority")
+  //   const search = url.searchParams.get("search")?.toLowerCase()
+
+  //   let filtered = mockTickets
+
+  //   if (status) filtered = filtered.filter((t) => t.status === status)
+  //   if (priority) filtered = filtered.filter((t) => t.priority === priority)
+  //   if (search) filtered = filtered.filter((t) => t.title.toLowerCase().includes(search))
+
+  //   return HttpResponse.json(filtered)
+  // }),
+
   http.get("/api/tickets", async ({ request }) => {
-    await delay(400)
+    const url = new URL(request.url)
+    const status = url.searchParams.get("status")
+    const priority = url.searchParams.get("priority")
+    const search = url.searchParams.get("search")?.toLowerCase()
+
+    // Deliberately slower for short queries, so a response for "p" can
+    // arrive AFTER the response for "payment". This mimics a real network.
+    await delay(search ? Math.max(100, 1500 - search.length * 300) : 400)
 
     const authHeader = request.headers.get("Authorization")
     if (!authHeader) {
       return HttpResponse.json({ message: "Unauthorized" }, { status: 401 })
     }
-
-    const url = new URL(request.url)
-    const status = url.searchParams.get("status")
-    const priority = url.searchParams.get("priority")
-    const search = url.searchParams.get("search")?.toLowerCase()
 
     let filtered = mockTickets
 
